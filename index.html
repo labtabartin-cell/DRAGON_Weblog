@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>وبلاگ فارسی</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<style>
+/* چیدمان: ستون خوانش باریک در مرکز، سربرگ ساده، فهرست نوشته‌ها با خط جداکننده */
+:root{
+  --bg:#f3f5f7; --surface:#ffffff; --fg:#14202b; --muted:#5b6b7a; --line:#dce2e8;
+  --accent:#0f766e; --accent-fg:#ffffff; --danger:#b42318; --ok:#067647;
+  --font:'Vazirmatn',system-ui,-apple-system,'Segoe UI',Tahoma,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0e1419; --surface:#161e26; --fg:#e6edf3; --muted:#92a1b0; --line:#26323d;
+  --accent:#2dd4bf; --accent-fg:#06201d; --danger:#f97066; --ok:#47cd89; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e1419; --surface:#161e26; --fg:#e6edf3; --muted:#92a1b0; --line:#26323d;
+  --accent:#2dd4bf; --accent-fg:#06201d; --danger:#f97066; --ok:#47cd89; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font);font-size:17px;line-height:1.9;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:720px;margin:0 auto;padding-block:0 64px}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:22px;border-bottom:1px solid var(--line)}
+.brand{font-weight:800;font-size:22px;color:var(--fg)}
+.brand:hover{text-decoration:none;color:var(--accent)}
+nav{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+button,.btn{font:inherit;font-size:15px;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--fg);padding:6px 14px;border-radius:6px;line-height:1.6}
+button:hover,.btn:hover{border-color:var(--accent);text-decoration:none}
+.primary{background:var(--accent);color:var(--accent-fg);border-color:var(--accent);font-weight:700}
+.danger{color:var(--danger)}
+.cats{display:flex;gap:8px;flex-wrap:wrap;padding-block:18px}
+.cats button[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.item{padding-block:22px;border-bottom:1px solid var(--line)}
+.item h2{margin:0 0 4px;font-size:22px;line-height:1.5}
+.item h2 a{color:var(--fg)}
+.item h2 a:hover{color:var(--accent)}
+.meta{color:var(--muted);font-size:14px;display:flex;gap:12px;flex-wrap:wrap}
+.item p{margin:8px 0 0;color:var(--muted)}
+.draft{color:var(--danger);font-weight:700}
+article h1{font-size:32px;line-height:1.5;margin:28px 0 6px;text-wrap:balance}
+.body p{margin:0 0 1.1em;max-width:65ch}
+h3{font-size:20px;margin:40px 0 8px}
+.comment{padding-block:14px;border-bottom:1px solid var(--line)}
+.comment .meta{margin-bottom:2px}
+.comment p{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
+form{display:grid;gap:12px;margin-top:20px}
+label{display:grid;gap:4px;font-size:15px;color:var(--muted)}
+input,textarea,select{font:inherit;font-size:16px;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:8px 12px;width:100%;min-width:0}
+textarea{min-height:120px;resize:vertical}
+textarea.long{min-height:320px}
+.msg{padding:10px 14px;border-radius:6px;border:1px solid var(--line);background:var(--surface);font-size:15px}
+.msg.err{color:var(--danger);border-color:var(--danger)}
+.msg.ok{color:var(--ok);border-color:var(--ok)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.empty{color:var(--muted);padding-block:48px;text-align:center}
+.check{display:flex;gap:8px;align-items:center;flex-direction:row;color:var(--fg)}
+.check input{width:auto}
+footer{color:var(--muted);font-size:14px;padding-top:28px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="brand" href="#/">وبلاگ فارسی</a>
+    <nav id="nav"></nav>
+  </header>
+  <main id="app"><div class="empty">در حال بارگذاری…</div></main>
+  <footer>ساخته شده با سوپابیس</footer>
+</div>
+<script>
+const SUPABASE_URL = 'https://cqhffckdyxrcbxxgfobb.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_afygaG-x4NTc8sNR_sl6RQ_uW0647nZ';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const app = document.getElementById('app');
+const nav = document.getElementById('nav');
+let session = null, profile = null, cats = [];
+
+const fa = new Intl.DateTimeFormat('fa-IR', {dateStyle:'long'});
+const fdate = d => fa.format(new Date(d));
+
+function h(tag, attrs, ...kids){
+  const el = document.createElement(tag);
+  for (const [k,v] of Object.entries(attrs||{})){
+    if (k==='class') el.className=v;
+    else if (k.startsWith('on')) el.addEventListener(k.slice(2), v);
+    else if (v===true) el.setAttribute(k,'');
+    else if (v!==false && v!=null) el.setAttribute(k,v);
+  }
+  for (const c of kids.flat()) if (c!=null && c!==false) el.append(c.nodeType?c:document.createTextNode(c));
+  return el;
+}
+const show = (...nodes) => app.replaceChildren(...nodes);
+const note = (text, kind='') => h('div',{class:'msg '+kind, role:'status'}, text);
+const isAdmin = () => !!(profile && profile.is_admin);
+const paragraphs = t => (t||'').split(/\n{2,}/).map(p => h('p',{}, p.trim())).filter(p=>p.textContent);
+const newSlug = () => 'p-' + Date.now().toString(36);
+
+async function loadUser(){
+  const { data } = await sb.auth.getSession();
+  session = data.session;
+  profile = null;
+  if (session){
+    const r = await sb.from('profiles').select('*').eq('id', session.user.id).maybeSingle();
+    profile = r.data;
+  }
+  renderNav();
+}
+function renderNav(){
+  nav.replaceChildren();
+  if (isAdmin()) nav.append(h('a',{class:'btn primary',href:'#/new'},'نوشته‌ی جدید'));
+  if (session){
+    nav.append(h('span',{class:'meta'}, profile?.display_name || 'کاربر'),
+      h('button',{onclick: async()=>{ await sb.auth.signOut(); await loadUser(); route(); }},'خروج'));
+  } else nav.append(h('a',{class:'btn',href:'#/login'},'ورود / ثبت‌نام'));
+}
+
+async function loadCats(){
+  const { data } = await sb.from('categories').select('*').order('id');
+  cats = data || [];
+}
+
+/* ---------- لیست ---------- */
+async function viewList(catSlug){
+  show(h('div',{class:'empty'},'در حال بارگذاری…'));
+  let q = sb.from('posts').select('id,title,slug,excerpt,published,published_at,created_at,category_id,categories(name,slug)')
+    .order('created_at',{ascending:false});
+  const cat = cats.find(c=>c.slug===catSlug);
+  if (cat) q = q.eq('category_id', cat.id);
+  const { data, error } = await q;
+  if (error) return show(note('خطا در دریافت نوشته‌ها: '+error.message,'err'));
+
+  const bar = h('div',{class:'cats'},
+    h('button',{'aria-pressed':String(!cat),onclick:()=>{location.hash='#/'}},'همه'),
+    cats.map(c=>h('button',{'aria-pressed':String(cat?.id===c.id),onclick:()=>{location.hash='#/cat/'+c.slug}},c.name)));
+  const items = data.length ? data.map(p => h('div',{class:'item'},
+      h('h2',{}, h('a',{href:'#/post/'+p.slug}, p.title)),
+      h('div',{class:'meta'},
+        p.published ? fdate(p.published_at||p.created_at) : h('span',{class:'draft'},'پیش‌نویس'),
+        p.categories?.name),
+      p.excerpt ? h('p',{},p.excerpt) : null))
+    : [h('div',{class:'empty'},'هنوز نوشته‌ای در این بخش نیست.')];
+  show(bar, ...items);
+}
+
+/* ---------- نوشته ---------- */
+async function viewPost(slug){
+  show(h('div',{class:'empty'},'در حال بارگذاری…'));
+  const { data:p, error } = await sb.from('posts').select('*,categories(name),profiles(display_name)').eq('slug',slug).maybeSingle();
+  if (error) return show(note('خطا: '+error.message,'err'));
+  if (!p) return show(h('div',{class:'empty'},'این نوشته پیدا نشد.'));
+  document.title = p.title + ' | وبلاگ فارسی';
+
+  const admin = isAdmin();
+  const art = h('article',{},
+    h('a',{href:'#/'},'← همه نوشته‌ها'),
+    h('h1',{},p.title),
+    h('div',{class:'meta'},
+      p.published ? fdate(p.published_at||p.created_at) : h('span',{class:'draft'},'پیش‌نویس'),
+      p.categories?.name, p.profiles?.display_name),
+    admin ? h('div',{class:'row',style:'margin-top:12px'},
+      h('a',{class:'btn',href:'#/edit/'+p.id},'ویرایش'),
+      h('button',{class:'danger',onclick:async(e)=>{
+        if (e.target.dataset.sure!=='1'){ e.target.dataset.sure='1'; e.target.textContent='برای حذف دوباره بزنید'; return; }
+        const r = await sb.from('posts').delete().eq('id',p.id);
+        if (r.error) return alert2(r.error.message);
+        location.hash='#/';
+      }},'حذف')) : null,
+    h('div',{class:'body',style:'margin-top:24px'}, paragraphs(p.content)));
+
+  const box = h('section',{});
+  show(art, box);
+  renderComments(box, p);
+}
+function alert2(t){ app.prepend(note(t,'err')); }
+
+async function renderComments(box, p){
+  const { data, error } = await sb.from('comments').select('id,body,created_at,user_id,profiles(display_name)')
+    .eq('post_id',p.id).order('created_at');
+  box.replaceChildren(h('h3',{},'نظرات ('+(error?0:data.length)+')'));
+  if (error) return box.append(note('خطا: '+error.message,'err'));
+  if (!data.length) box.append(h('div',{class:'meta'},'هنوز نظری ثبت نشده.'));
+  for (const c of data){
+    const mine = session && (c.user_id===session.user.id || isAdmin());
+    box.append(h('div',{class:'comment'},
+      h('div',{class:'meta'}, c.profiles?.display_name||'کاربر', fdate(c.created_at),
+        mine ? h('button',{class:'danger',style:'padding:0 8px;font-size:13px',onclick:async()=>{
+          await sb.from('comments').delete().eq('id',c.id); renderComments(box,p);}},'حذف') : null),
+      h('p',{},c.body)));
+  }
+  if (!session){
+    box.append(h('p',{class:'meta'},h('a',{href:'#/login'},'وارد شوید'),' تا نظر بگذارید.'));
+    return;
+  }
+  const ta = h('textarea',{id:'cbody',maxlength:'2000',required:true});
+  const err = h('div');
+  box.append(h('form',{onsubmit:async e=>{
+      e.preventDefault();
+      const body = ta.value.trim(); if(!body) return;
+      const r = await sb.from('comments').insert({post_id:p.id,user_id:session.user.id,body});
+      if (r.error) return err.replaceChildren(note(r.error.message,'err'));
+      renderComments(box,p);
+    }},
+    h('label',{for:'cbody'},'نظر شما', ta), err,
+    h('div',{class:'row'},h('button',{class:'primary',type:'submit'},'ارسال نظر'))));
+}
+
+/* ---------- ورود ---------- */
+function viewLogin(){
+  let mode = 'in';
+  const out = h('div'), form = h('form');
+  const draw = () => {
+    const email = h('input',{id:'email',type:'email',required:true,autocomplete:'email',dir:'ltr'});
+    const pass = h('input',{id:'pass',type:'password',required:true,minlength:'6',autocomplete:mode==='in'?'current-password':'new-password',dir:'ltr'});
+    const name = h('input',{id:'dname',type:'text',maxlength:'40'});
+    form.replaceChildren(
+      mode==='up' ? h('label',{for:'dname'},'نام نمایشی',name) : null,
+      h('label',{for:'email'},'ایمیل',email),
+      h('label',{for:'pass'},'گذرواژه (حداقل ۶ نویسه)',pass),
+      h('div',{class:'row'},
+        h('button',{class:'primary',type:'submit'}, mode==='in'?'ورود':'ثبت‌نام'),
+        h('button',{type:'button',onclick:()=>{mode=mode==='in'?'up':'in';out.replaceChildren();draw();}},
+          mode==='in'?'حساب ندارم':'حساب دارم')));
+    form.onsubmit = async e => {
+      e.preventDefault(); out.replaceChildren();
+      if (mode==='in'){
+        const r = await sb.auth.signInWithPassword({email:email.value,password:pass.value});
+        if (r.error) return out.replaceChildren(note('ایمیل یا گذرواژه درست نیست.','err'));
+        await loadUser(); location.hash='#/';
+      } else {
+        const r = await sb.auth.signUp({email:email.value,password:pass.value,options:{data:{display_name:name.value.trim()}}});
+        if (r.error) return out.replaceChildren(note(r.error.message,'err'));
+        if (r.data.session){ await loadUser(); location.hash='#/'; }
+        else out.replaceChildren(note('ثبت‌نام انجام شد. لینک تأیید به ایمیل شما ارسال شد؛ بعد از تأیید وارد شوید.','ok'));
+      }
+    };
+  };
+  draw();
+  show(h('h1',{style:'font-size:28px;margin:28px 0 0'},'ورود به وبلاگ'), form, out);
+}
+
+/* ---------- ویرایشگر (مدیر) ---------- */
+async function viewEditor(id){
+  if (!isAdmin()) return show(note('فقط مدیر به این بخش دسترسی دارد.','err'));
+  let p = {title:'',excerpt:'',content:'',category_id:'',published:true};
+  if (id){
+    const r = await sb.from('posts').select('*').eq('id',id).maybeSingle();
+    if (!r.data) return show(h('div',{class:'empty'},'نوشته پیدا نشد.'));
+    p = r.data;
+  }
+  const title = h('input',{id:'t',value:p.title,required:true,maxlength:'200'});
+  const excerpt = h('input',{id:'x',value:p.excerpt||''});
+  const content = h('textarea',{id:'c',class:'long'}); content.value = p.content||'';
+  const cat = h('select',{id:'k'}, h('option',{value:''},'بدون دسته'),
+    cats.map(c=>h('option',{value:c.id,selected:String(c.id)===String(p.category_id)},c.name)));
+  const pub = h('input',{id:'pb',type:'checkbox',checked:!!p.published});
+  const out = h('div');
+  show(h('h1',{style:'font-size:28px;margin:28px 0 0'}, id?'ویرایش نوشته':'نوشته‌ی جدید'),
+    h('form',{onsubmit:async e=>{
+      e.preventDefault();
+      const row = {title:title.value.trim(),excerpt:excerpt.value.trim(),content:content.value,
+        category_id:cat.value?Number(cat.value):null,published:pub.checked,author_id:session.user.id};
+      if (row.published && !p.published_at) row.published_at = new Date().toISOString();
+      let r;
+      if (id) r = await sb.from('posts').update(row).eq('id',id).select('slug').single();
+      else { row.slug = newSlug(); r = await sb.from('posts').insert(row).select('slug').single(); }
+      if (r.error) return out.replaceChildren(note(r.error.message,'err'));
+      location.hash = '#/post/'+r.data.slug;
+    }},
+    h('label',{for:'t'},'عنوان',title),
+    h('label',{for:'x'},'چکیده',excerpt),
+    h('label',{for:'k'},'دسته',cat),
+    h('label',{for:'c'},'متن (بین پاراگراف‌ها یک خط خالی بگذارید)',content),
+    h('label',{class:'check',for:'pb'},pub,'منتشر شود'),
+    out,
+    h('div',{class:'row'},h('button',{class:'primary',type:'submit'},'ذخیره'),h('a',{class:'btn',href:'#/'},'انصراف'))));
+}
+
+/* ---------- مسیریابی ---------- */
+async function route(){
+  document.title = 'وبلاگ فارسی';
+  const [,a,b] = location.hash.replace(/^#/,'').split('/');
+  window.scrollTo(0,0);
+  if (a==='post') return viewPost(decodeURIComponent(b));
+  if (a==='cat') return viewList(b);
+  if (a==='login') return viewLogin();
+  if (a==='new') return viewEditor();
+  if (a==='edit') return viewEditor(Number(b));
+  return viewList();
+}
+window.addEventListener('hashchange', route);
+sb.auth.onAuthStateChange(()=>{});
+(async()=>{ await Promise.all([loadUser(),loadCats()]); route(); })();
+</script>
+</body>
+</html>
